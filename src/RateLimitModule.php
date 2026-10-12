@@ -32,7 +32,6 @@ final class RateLimitModule extends AbstractModule
         return new self(new SqliteDsn($dsn));
     }
 
-    /** Counts live only in this process: for tests and single-process demos. */
     public static function withInMemory(): self
     {
         return new self(null);
