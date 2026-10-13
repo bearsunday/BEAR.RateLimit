@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace BEAR\RateLimit\Fake;
 
+use BEAR\RateLimit\Http\RemoteAddressInterface;
 use BEAR\RateLimit\RateLimitModule;
 use BEAR\RateLimit\Throttle\InMemoryThrottle;
 use BEAR\RateLimit\Throttle\ThrottleInterface;
@@ -38,5 +39,6 @@ final class AppBindingsModule extends AbstractModule
     {
         $this->bind(ClockInterface::class)->to(FakeClock::class)->in(Scope::SINGLETON);
         $this->bind(ThrottleInterface::class)->to(InMemoryThrottle::class)->in(Scope::SINGLETON);
+        $this->bind(RemoteAddressInterface::class)->to(FakeRemoteAddress::class)->in(Scope::SINGLETON);
     }
 }

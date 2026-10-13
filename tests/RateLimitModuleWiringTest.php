@@ -7,6 +7,7 @@ namespace BEAR\RateLimit;
 use BEAR\RateLimit\Exception\TooManyRequestsException;
 use BEAR\RateLimit\Fake\AppBindingsModule;
 use BEAR\RateLimit\Fake\FakeClock;
+use BEAR\RateLimit\Fake\FakeRemoteAddress;
 use BEAR\RateLimit\Fake\RateLimitedResource;
 use BEAR\RateLimit\Http\RemoteAddressInterface;
 use BEAR\RateLimit\Http\ServerRemoteAddress;
@@ -70,6 +71,7 @@ final class RateLimitModuleWiringTest extends TestCase
 
         $this->assertInstanceOf(FakeClock::class, $injector->getInstance(ClockInterface::class));
         $this->assertInstanceOf(InMemoryThrottle::class, $injector->getInstance(ThrottleInterface::class));
+        $this->assertInstanceOf(FakeRemoteAddress::class, $injector->getInstance(RemoteAddressInterface::class));
     }
 
     private function injector(AbstractModule $module): Injector
