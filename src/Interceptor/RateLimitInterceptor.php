@@ -8,10 +8,10 @@ use BEAR\RateLimit\Attribute\RateLimit;
 use BEAR\RateLimit\Exception\TooManyRequestsException;
 use BEAR\RateLimit\Http\RemoteAddressInterface;
 use BEAR\RateLimit\Throttle\ThrottleInterface;
-use BEAR\Resource\ResourceObject;
 use Override;
 use Ray\Aop\MethodInterceptor;
 use Ray\Aop\MethodInvocation;
+use ReflectionMethod;
 
 use function assert;
 use function sha1;
@@ -28,9 +28,10 @@ final readonly class RateLimitInterceptor implements MethodInterceptor
     #[Override]
     public function invoke(MethodInvocation $invocation): mixed
     {
-        $policy = $invocation->getMethod()->getAnnotation(RateLimit::class);
+        $method = $invocation->getMethod();
+        $policy = $method->getAnnotation(RateLimit::class);
         assert($policy instanceof RateLimit);
-        $key = $this->key($invocation);
+        $key = $this->key($method);
 
         if ($this->throttle->isExceeded($key, $policy->limit)) {
             throw new TooManyRequestsException();
@@ -41,14 +42,10 @@ final readonly class RateLimitInterceptor implements MethodInterceptor
         return $invocation->proceed();
     }
 
-    /** @param MethodInvocation<object> $invocation */
-    private function key(MethodInvocation $invocation): string
+    private function key(ReflectionMethod $method): string
     {
-        $resource = $invocation->getThis();
-        assert($resource instanceof ResourceObject);
-        $uri = $resource->uri;
         $address = $this->remoteAddress->address() ?? '';
 
-        return sha1("{$uri->scheme}://{$uri->host}{$uri->path}|{$address}");
+        return sha1("{$method->class}::{$method->name}|{$address}");
     }
 }

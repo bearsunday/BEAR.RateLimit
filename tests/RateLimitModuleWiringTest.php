@@ -13,7 +13,6 @@ use BEAR\RateLimit\Http\ServerRemoteAddress;
 use BEAR\RateLimit\Throttle\InMemoryThrottle;
 use BEAR\RateLimit\Throttle\SqliteThrottle;
 use BEAR\RateLimit\Throttle\ThrottleInterface;
-use BEAR\Resource\Uri;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Clock\ClockInterface;
@@ -30,7 +29,6 @@ final class RateLimitModuleWiringTest extends TestCase
     public function testRequestBeyondTheLimitIsRejected(): void
     {
         $resource = $this->injector(RateLimitModule::withInMemory())->getInstance(RateLimitedResource::class);
-        $resource->uri = new Uri('page://self/limited');
         $resource->onGet();
         $resource->onGet();
 

@@ -57,10 +57,15 @@ no remote address, so all CLI callers share one counter.
 
 ## Key
 
-A request is counted under `scheme://host/path` plus the remote address. The
-query is not part of the key, so a client cannot reset its count by varying the
-query string. When there is no remote address, all address-less requests to a
-path share one counter.
+A request is counted under the method that carries the attribute plus the
+remote address. Two attributed methods on one class, such as `onGet` and
+`onPost`, have separate counters.
+
+The URI is not part of the key. `AppAdapter` maps `/login`, `/-login` and
+`/login?x=1` to the same `Login::onPost`, and they share one counter, so a
+client cannot reset its count by respelling the path or varying the query.
+When there is no remote address, all address-less requests to a method share
+one counter.
 
 ## Window
 

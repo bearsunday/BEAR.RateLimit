@@ -58,19 +58,19 @@ final class RateLimitInterceptorTest extends TestCase
         $this->assertFalse($this->rejected($target, self::URI));
     }
 
-    public function testAnotherPathHasItsOwnCounter(): void
+    public function testAnotherMethodHasItsOwnCounter(): void
     {
         $target = new RateLimitedResource();
         $this->reachLimit($target);
 
-        $this->assertFalse($this->rejected($target, 'page://self/other'));
+        $this->assertFalse($this->rejected($target, self::URI, 'onPost'));
     }
 
-    public function testUrisThatDifferOnlyInQueryShareOneCounter(): void
+    public function testUriSpellingsOfOneMethodShareOneCounter(): void
     {
         $target = new RateLimitedResource();
-        $this->attempt($target, self::URI . '?code=a&state=1');
-        $this->attempt($target, self::URI . '?code=b&state=2');
+        $this->attempt($target, self::URI);
+        $this->attempt($target, 'page://self/-limited');
 
         $this->assertTrue($this->rejected($target, self::URI . '?code=c&state=3'));
     }
@@ -100,10 +100,11 @@ final class RateLimitInterceptorTest extends TestCase
         $this->attempt($target, self::URI);
     }
 
-    private function rejected(RateLimitedResource $target, string $uri): bool
+    /** @param non-empty-string $method */
+    private function rejected(RateLimitedResource $target, string $uri, string $method = 'onGet'): bool
     {
         try {
-            $this->attempt($target, $uri);
+            $this->attempt($target, $uri, $method);
         } catch (TooManyRequestsException) {
             return true;
         }
@@ -111,10 +112,11 @@ final class RateLimitInterceptorTest extends TestCase
         return false;
     }
 
-    private function attempt(RateLimitedResource $target, string $uri): void
+    /** @param non-empty-string $method */
+    private function attempt(RateLimitedResource $target, string $uri, string $method = 'onGet'): void
     {
         $target->uri = new Uri($uri);
 
-        (new ReflectiveMethodInvocation($target, 'onGet', [], [$this->interceptor]))->proceed();
+        (new ReflectiveMethodInvocation($target, $method, [], [$this->interceptor]))->proceed();
     }
 }

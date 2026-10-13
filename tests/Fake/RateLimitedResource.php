@@ -18,4 +18,12 @@ class RateLimitedResource extends ResourceObject
 
         return $this;
     }
+
+    #[RateLimit(limit: 2, interval: '1 minute')]
+    public function onPost(): static
+    {
+        $this->reached++;
+
+        return $this;
+    }
 }

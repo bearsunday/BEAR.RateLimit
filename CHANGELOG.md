@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `#[RateLimit(limit, interval)]` — per-method fixed-window limit on a `ResourceObject`.
 - `RateLimitModule::withSqlite()` and `RateLimitModule::withInMemory()` — DI wiring with the store chosen by name.
-- `RateLimitInterceptor` — counts by `scheme://host/path` and remote address, and rejects before the method runs.
+- `RateLimitInterceptor` — counts by the attributed method and remote address, and rejects before the method runs.
 - `TooManyRequestsException` — a `BadRequestException` with code 429.
 - `ThrottleInterface` with `SqliteThrottle` (configured by `SqliteDsn`) and `InMemoryThrottle`.
 - `RemoteAddressInterface` with `ServerRemoteAddress`, which reads `REMOTE_ADDR` only.
