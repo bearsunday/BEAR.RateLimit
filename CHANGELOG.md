@@ -23,3 +23,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Expired SQLite rows are overwritten on the next request for the same key, never deleted.
 - Rotating addresses within an IPv6 `/64` evades a per-address limit; prefix normalisation belongs in a `RemoteAddressInterface` implementation, which the package does not ship yet.
 - No `Retry-After` header is returned.
+- `#[RateLimit]` on a `final` class is skipped without an error, because Ray.Di weaves interceptors through a subclass.

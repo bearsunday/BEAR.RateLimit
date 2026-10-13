@@ -36,7 +36,7 @@ binding wins whether it is made before or after `install()`.
 ```php
 use BEAR\RateLimit\Attribute\RateLimit;
 
-final class Login extends ResourceObject
+class Login extends ResourceObject
 {
     #[RateLimit(limit: 10, interval: '30 minutes')]
     public function onPost(string $email, string $password): static
@@ -49,6 +49,10 @@ final class Login extends ResourceObject
 Both arguments are required, so the policy is always visible on the method.
 `interval` is a PHP relative format without a sign (`'30 minutes'`, `'1 hour'`,
 `'10 seconds'`); it is applied as `'+' . $interval`.
+
+The class must not be `final`. Ray.Di applies interceptors through a generated
+subclass and skips a `final` class without an error, so the limit would never
+run.
 
 Put the attribute on the Page methods a browser reaches, not on App resources
 reached from the CLI or through internal requests. Those calls are counted too:
